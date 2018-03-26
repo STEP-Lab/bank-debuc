@@ -3,24 +3,28 @@ package com.debuc.bank;
 public class Account {
     private String owner;
     private final String accountNo;
-    private double balance;
+    private Currency balance;
     private Object accountOwner;
 
-    public Account(String owner, String accountNo, double balance) throws MinimumBalanceException {
-        checkMinimumBalance(balance);
+    private Account(String owner, String accountNo, Currency balance) throws MinimumBalanceException {
         this.owner = owner;
         this.accountNo = accountNo;
         this.balance = balance;
     }
 
-    private void checkMinimumBalance(double balance) throws MinimumBalanceException {
+    private static void checkMinimumBalance(double balance) throws MinimumBalanceException {
         if (balance<1000){
             throw new MinimumBalanceException();
         }
     }
 
+    public static Account create(String owner, String accountNo, double balance) throws MinimumBalanceException, NegativeValueException {
+        checkMinimumBalance(balance);
+        return new Account(owner, accountNo, Currency.create(balance));
+    }
+
     public double getBalance() {
-        return balance;
+        return balance.getAmount();
     }
 
     public String getAccountNo() {
@@ -31,14 +35,14 @@ public class Account {
         return owner;
     }
 
-    public double credit(double amount) {
-        balance += amount;
-        return balance;
+    public double credit(double amount) throws NegativeValueException {
+        balance.add(amount);
+        return balance.getAmount();
     }
 
-    public double debit(double amount) throws MinimumBalanceException {
-        checkMinimumBalance(balance-amount);
-        balance -= amount;
-        return balance;
+    public double debit(double amount) throws MinimumBalanceException, NegativeValueException {
+        checkMinimumBalance(balance.getAmount() - amount);
+        balance.deduct(amount);
+        return balance.getAmount();
     }
 }

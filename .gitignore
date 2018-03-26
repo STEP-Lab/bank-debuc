@@ -2,8 +2,6 @@ build/
 .settings/
 .vscode/
 gradle/
-gradlew
-gradlew.bat
 .gradle
 .project
 .DS_Store
